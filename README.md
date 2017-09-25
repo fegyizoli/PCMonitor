@@ -1,10 +1,10 @@
-#PCMonitor
+# PCMonitor
 
 This is a basic 'arduino-based' module which contains:
 - Arduino Nano (with Atmega328)
 - 4x20 LCD with HD44780 driver IC
 
-##Features
+## Features
 
 - [x] Communication via UART with the PC
 - [x] PWM driven Backlight (can be set value with serial commands)
@@ -12,17 +12,17 @@ This is a basic 'arduino-based' module which contains:
 - [x] Clear entire screen
 - [x] Debug mode (messages via UART)
 
-##Hardware description
+## Hardware description
 
-###LCD Connection:
+### LCD Connection:
 
 | LCD pins | Arduino Nano pins | 
 |:--------:|:----------------:|
 |  1 Vss    | GND                   |
-|  2 Vcc    | +5V                   | <-- Connected to the potentiometer
-|  3 V0      |                         | <-- Connected to the potentiometer
+|  2 Vcc    | +5V                   | 
+|  3 V0      |                         | 
 |  4 RS      | D12                   |
-|  5 RW     | GND                   | <-- Connected to the potentiometer
+|  5 RW     | GND                   | 
 |  6 E       | D11                    |
 |  7 DB0    | Not Connected     |
 |  8 DB1    | Not Connected     |
@@ -42,6 +42,6 @@ This is a basic 'arduino-based' module which contains:
      _|_
     |   |
     |   |<--- V0
-    |__|
+    |_ _|
       |
     GND
