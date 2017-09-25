@@ -80,19 +80,19 @@ Command format:
 
 Examples:
 
-- Write "Hello world!" to the first line: 
+Write "Hello world!" to the first line: 
 **CHR:** `+[aHello world!]` 
 **HEX:** {0x2B, 0x5B, 0x61, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21, 0x5D}
 
-- Write "Hello world!" to the second line: 
+Write "Hello world!" to the second line: 
 **CHR:** `[bHello world!]`
 **HEX:** {0x5B, 0x62, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21, 0x5D}
 
-- Clear screen (interpreter does not care with the attribute): 
+Clear screen (interpreter does not care with the attribute): 
 **CHR:** `[C0]`
 **HEX:** {0x5B, 0x43, 0x30, 0x5D}
 
-- Set backlight to intensity 50: 
+Set backlight to intensity 50: 
 **CHR:** `[B2]`
 **HEX:** {0x5B, 0x42, 0x32, 0x5D}
 
