@@ -76,7 +76,7 @@ The connection shall be renewed with a command or the conne
 |  d                                | 0x64  | Write line 3                    |
 
 Command format:
-"["<command-code><attribute0><attribute1>...<attributeN>"]"
+`"[" command-code  attribute0  attribute1 ... attributeN "]"`
 
 Examples:
 
