@@ -11,6 +11,13 @@ This is a basic 'arduino-based' module which contains:
 - [x] Display strings in every row
 - [x] Clear entire screen
 - [x] Debug mode (messages via UART)
+- [ ] Basic custom character handling (only 8 chars)
+- [ ] Advanced custom character handling (any chars)
+- [ ] Feedback to host
+- [ ] Host application to PC (basic C# application with openhardwaremonitor.dll)
+- [ ] connect 4x4 pinpad
+- [ ] basic menu feature
+- [ ] fan control with pinpad
 
 ## Hardware description
 
@@ -36,7 +43,7 @@ This is a basic 'arduino-based' module which contains:
 | 16 LED-   | GND                   |
 
 
-###Potentiometer connection:
+### Potentiometer connection:
 
      Vcc
      _|_
@@ -44,4 +51,50 @@ This is a basic 'arduino-based' module which contains:
     |   |<--- V0
     |_ _|
       |
-    GND
+     GND
+     
+## Software features
+
+### Arduino firmware
+
+To communicate with the device the host shall connect to it.
+The connection shall be renewed with a command or the conne
+
+
+
+| Command code (Chr) | Hex     | Description                    |
+| :-------------------------- |:-------:|:----------------------------- |
+|  +                                | 0x2B  | Connect or ping device  |
+|  -                                 | 0x2D  | Disconnect                     |
+|  B                                | 0x42  | Set backlight (0-255)     |
+|  C                                | 0x43  | Clear screen                  |
+|  [                                 | 0x5B  | Command begin            |
+|  ]                                 | 0x5D  | Command end               |
+|  a                                | 0x61  | Write line 0                    |
+|  b                                | 0x62  | Write line 1                    |
+|  c                                 | 0x63  | Write line 2                    |
+|  d                                | 0x64  | Write line 3                    |
+
+Command format:
+"["<command-code><attribute0><attribute1>...<attributeN>"]"
+
+Examples:
+
+- Write "Hello world!" to the first line: 
+> CHR: +[aHello world!] 
+> HEX: {0x2B, 0x5B, 0x61, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21, 0x5D}
+
+- Write "Hello world!" to the second line: 
+> CHR:[bHello world!]
+> HEX: {0x5B, 0x62, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21, 0x5D}
+
+- Clear screen (interpreter does not care with the attribute): 
+> CHR: [C0]
+> HEX: {0x5B, 0x43, 0x30, 0x5D}
+
+- Set backlight to intensity 50: 
+> CHR: [B2]
+> HEX: {0x5B, 0x42, 0x32, 0x5D}
+
+
+
