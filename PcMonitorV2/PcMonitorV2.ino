@@ -7,9 +7,8 @@
 
 /* LONG COMMAND STATES */
 #define CMD_CODE    0 
-#define CMD_LEN      1
-#define CMD_DATA    2
-#define CMD_END      3
+#define CMD_DATA    1
+#define CMD_END      2
 
 /* COMMAND CODES */
 #define C_WRITELN0    'a'
@@ -18,8 +17,16 @@
 #define C_WRITELN3    'd'
 #define C_CLEARSCR    'C'
 #define C_BACKLGHT    'B'
-//TODO
-#define C_ANSWER      'A'
+
+/* TODO: Responses */
+#define C_CMDOK        'O'
+#define C_CMDNOK      'N'
+/* TODO: Fault codes */
+#define C_CMDUNK      'U'
+#define C_CMDFOR      'F'
+#define C_CMDONG      'G'
+
+/* TODO: New functions */
 #define C_CUSTCH0     '0'
 #define C_CUSTCH1     '1'
 #define C_CUSTCH2     '2'
@@ -36,11 +43,11 @@
 
 #define UART_BAUDRATE 19200
 
-#define CONNECTED_BACKLIGHT 100
-#define SLEEP_BACKLIGHT 10
+#define CONNECTED_BACKLIGHT 170
+#define SLEEP_BACKLIGHT 3
 
 boolean isConnected;
-int commandState;
+int commandState, commandState_old;
 int connectTimerID;
 /* --- LCD ------------------------------------------------------------------------------------------------------------------------ */
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
@@ -80,10 +87,11 @@ void beginUART(int baud)
 void setup() 
 {
   initLCD();
-  setBacklight(10);
+  setBacklight(SLEEP_BACKLIGHT);
   beginUART(UART_BAUDRATE);
   isConnected = false;
   commandState = CMD_END;
+  commandState_old = CMD_END;
 }
 
 void connectionTimeoutCallback()
@@ -106,11 +114,15 @@ int data_idx;
 
 int timeout_val_old;
 
+
 /* Returns 'false' if command not recognized, otherwise returns 'true'      */
 boolean processLongCmd(char c)
 {
     boolean retval = false;
     int numeric_attr;
+    
+    char act_retval, act_faultcode;
+    
     switch(c)
     {
         /* Connect or ping (in case no ongoing command processing!) */
@@ -128,6 +140,10 @@ boolean processLongCmd(char c)
                 setBacklight(CONNECTED_BACKLIGHT);
                 //lcd.clear();
                 isConnected = true;
+                
+                /* Connected successfully */
+                sendResponse(C_CMDOK, ' ', '+');
+                
                 connectTimerID = connectTimer.setTimeout(CONNECTION_TIMEOUT,connectionTimeoutCallback);
                 connectTimerTimestamp = millis();
             }
@@ -139,6 +155,7 @@ boolean processLongCmd(char c)
                     Serial.print(String(CONNECTION_TIMEOUT/1000));
                     Serial.write(" s timer...\n");                    
                 }
+                
                 connectTimer.restartTimer(connectTimerID);
                 connectTimerTimestamp = millis();
             }
@@ -154,6 +171,8 @@ boolean processLongCmd(char c)
                 {
                     Serial.write("disconnect command\n");
                 }
+                /* Disconnected successfully */
+                sendResponse(C_CMDOK, ' ', '-');
                 connectTimer.setTimeout(1,connectionTimeoutCallback);
             }
         }
@@ -170,6 +189,8 @@ boolean processLongCmd(char c)
                 }
                 /* (re)initialize command parameters */
                 act_cmd = CMD_CODE;
+                
+                commandState_old = commandState;
                 commandState = CMD_CODE;    
             }
         }
@@ -182,6 +203,14 @@ boolean processLongCmd(char c)
             {
                 Serial.write("command end character detected!\n");
             }
+            if(commandState == CMD_CODE)
+            {
+                /* Command format error: "[]"  */
+                act_retval = C_CMDNOK;
+                act_faultcode = C_CMDFOR;
+
+            }
+            commandState_old = commandState;
             commandState = CMD_END;
         }
         break;
@@ -211,6 +240,11 @@ boolean processLongCmd(char c)
                        /* Get command */
                        act_cmd = c; 
                        data_idx = 0;
+                       
+                       /* Set faultcode to Command Ongoing in case a command end character comes immediately */
+                       act_retval = C_CMDNOK;
+                       act_faultcode = C_CMDONG; 
+                       commandState_old = commandState;
                        commandState = CMD_DATA;
                     }
                     break;
@@ -243,6 +277,9 @@ boolean processLongCmd(char c)
                                     lcd.write(c);
                                     data_idx++;
                                 }
+                               /* Command OK */
+                               act_retval = C_CMDOK;
+                               act_faultcode = (char)0;
                             }
                             break;
                             /* Write character to the 2nd line */
@@ -262,6 +299,9 @@ boolean processLongCmd(char c)
                                     lcd.write(c);
                                     data_idx++;
                                 }
+                               /* Command OK */
+                               act_retval = C_CMDOK;
+                               act_faultcode = (char)0;                                
                             }
                             break;
                             /* Write character to the 3rd line */
@@ -281,6 +321,9 @@ boolean processLongCmd(char c)
                                     lcd.write(c);
                                     data_idx++;
                                 }
+                               /* Command OK */
+                               act_retval = C_CMDOK;
+                               act_faultcode = (char)0;                                
                             }
                             break;
                             /* Write character to the 4th line */
@@ -300,6 +343,9 @@ boolean processLongCmd(char c)
                                     lcd.write(c);
                                     data_idx++;
                                 }
+                               /* Command OK */
+                               act_retval = C_CMDOK;
+                               act_faultcode = (char)0;                                
                             }
                             break;
                             /* Clear screen */
@@ -310,6 +356,9 @@ boolean processLongCmd(char c)
                                     Serial.write("clear screen\n");
                                 }
                                 lcd.clear();
+                               /* Command OK */
+                               act_retval = C_CMDOK;
+                               act_faultcode = (char)0;                                
                             }
                             break;
                             /* Set backlight */
@@ -323,6 +372,20 @@ boolean processLongCmd(char c)
                                     Serial.write(" )\n");
                                 }
                                 setBacklight((uint8_t)c);
+                               /* Command OK */
+                               act_retval = C_CMDOK;
+                               act_faultcode = (char)0;                                
+                            }
+                            break;
+                            
+                            /* Unknown command */
+                            default:
+                            {
+                                act_retval = C_CMDNOK;
+                                act_faultcode = C_CMDUNK;
+                                
+                                commandState_old = commandState;
+                                commandState = CMD_END;
                             }
                             break;
                         }
@@ -331,7 +394,7 @@ boolean processLongCmd(char c)
                     
                     case CMD_END:
                     {
-                        //TODO: send response - unknown command
+                        sendResponse(act_retval, act_faultcode, act_cmd);
                     }
                     break;
                 }
@@ -341,6 +404,32 @@ boolean processLongCmd(char c)
     }
     
     return retval;
+}
+
+/* Response data function */
+void sendResponse(char cmd, char fault_code, char other_data)
+{
+    char respData[3];
+    int i;
+     
+    if(cmd == C_CMDOK)
+    {
+        respData[0] = C_CMDOK;
+        respData[1] = 0x00;
+        
+    }
+    else
+    {
+        respData[0] = C_CMDNOK;
+        respData[1] = fault_code;
+        
+    }
+    respData[2] = other_data;
+    
+    for(i = 0; i<3; i++)
+    {
+        Serial.print(String(respData[i]));
+    }
 }
 
 /* --- Connection checker -------------------------------------------------------- */
