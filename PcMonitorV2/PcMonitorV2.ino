@@ -37,17 +37,18 @@
 #define C_CUSTCH7     '7'
 
 /* FIRMWARE CONFIGURATION */
-#define ENABLE_SERIAL_DEBUGGING 1
+#define ENABLE_SERIAL_DEBUGGING 0
 
 #define CONNECTION_TIMEOUT 30000
 
 #define UART_BAUDRATE 19200
 
-#define CONNECTED_BACKLIGHT 170
-#define SLEEP_BACKLIGHT 3
+#define CONNECTED_BACKLIGHT 100
+#define SLEEP_BACKLIGHT 1
 
 boolean isConnected;
 int commandState, commandState_old;
+char act_retval, act_faultcode;
 int connectTimerID;
 /* --- LCD ------------------------------------------------------------------------------------------------------------------------ */
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
@@ -92,6 +93,8 @@ void setup()
   isConnected = false;
   commandState = CMD_END;
   commandState_old = CMD_END;
+  act_retval = ' ';
+  act_faultcode = ' ';
 }
 
 void connectionTimeoutCallback()
@@ -114,14 +117,13 @@ int data_idx;
 
 int timeout_val_old;
 
-
 /* Returns 'false' if command not recognized, otherwise returns 'true'      */
 boolean processLongCmd(char c)
 {
     boolean retval = false;
     int numeric_attr;
     
-    char act_retval, act_faultcode;
+
     
     switch(c)
     {
@@ -181,17 +183,20 @@ boolean processLongCmd(char c)
         /* Begin command */
         case '[':
         {
-            if(commandState == CMD_END)
+            if(isConnected)
             {
-                if(ENABLE_SERIAL_DEBUGGING)
+                if(commandState == CMD_END)
                 {
-                    Serial.write("command begin character detected!\n");
+                    if(ENABLE_SERIAL_DEBUGGING)
+                    {
+                        Serial.write("command begin character detected!\n");
+                    }
+                    /* (re)initialize command parameters */
+                    act_cmd = CMD_CODE;
+                    
+                    commandState_old = commandState;
+                    commandState = CMD_CODE;    
                 }
-                /* (re)initialize command parameters */
-                act_cmd = CMD_CODE;
-                
-                commandState_old = commandState;
-                commandState = CMD_CODE;    
             }
         }
         break;
@@ -199,19 +204,29 @@ boolean processLongCmd(char c)
         /* End command */
         case ']':
         {
-            if(ENABLE_SERIAL_DEBUGGING)
+            if(isConnected)
             {
-                Serial.write("command end character detected!\n");
+                if(ENABLE_SERIAL_DEBUGGING)
+                {
+                    Serial.write("command end character detected!\n");
+                }
+                if(commandState == CMD_CODE)
+                {
+                    /* Command format error: "[]"  */
+                    act_retval = C_CMDNOK;
+                    act_faultcode = C_CMDFOR;
+                    act_cmd = c;
+                    commandState_old = commandState;
+                    commandState = CMD_END;
+                    sendResponse(act_retval, act_faultcode, act_cmd);
+                }
+                else if(commandState == CMD_DATA)
+                {
+                        commandState_old = commandState;
+                        commandState = CMD_END;
+                        sendResponse(act_retval, act_faultcode, act_cmd);
+                }
             }
-            if(commandState == CMD_CODE)
-            {
-                /* Command format error: "[]"  */
-                act_retval = C_CMDNOK;
-                act_faultcode = C_CMDFOR;
-                act_cmd = c;
-            }
-            commandState_old = commandState;
-            commandState = CMD_END;
         }
         break;
         
@@ -386,6 +401,7 @@ boolean processLongCmd(char c)
                                 
                                 commandState_old = commandState;
                                 commandState = CMD_END;
+                                sendResponse(act_retval, act_faultcode, act_cmd);
                             }
                             break;
                         }
@@ -394,7 +410,7 @@ boolean processLongCmd(char c)
                     
                     case CMD_END:
                     {
-                        sendResponse(act_retval, act_faultcode, act_cmd);
+                        //Will not reach normally
                     }
                     break;
                 }
@@ -410,8 +426,9 @@ boolean processLongCmd(char c)
 void sendResponse(char cmd, char fault_code, char other_data)
 {
     char respData[3];
+/*
     int i;
-     
+*/     
     if(cmd == C_CMDOK)
     {
         respData[0] = C_CMDOK;
@@ -426,10 +443,15 @@ void sendResponse(char cmd, char fault_code, char other_data)
     }
     respData[2] = other_data;
     
+    Serial.print(respData[0]);
+    Serial.print(respData[1]);
+    Serial.print(respData[2]);
+/*    
     for(i = 0; i<3; i++)
     {
         Serial.print(String(respData[i]));
     }
+*/    
 }
 
 /* --- Connection checker -------------------------------------------------------- */
