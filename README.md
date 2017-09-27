@@ -105,9 +105,12 @@ Command format:
 
 Examples:
 
+
+
 Write "Hello world!" to the first line: 
 **CHR:** `+[aHello world!]` 
 **HEX:** {0x2B, 0x5B, 0x61, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21, 0x5D}
+
 
 Response (note: NUL character is represented here as a whitespace):
 **CHR:** `O +O a`
@@ -118,6 +121,7 @@ Write "Hello world!" to the second line:
 **CHR:** `[bHello world!]`
 **HEX:** {0x5B, 0x62, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21, 0x5D}
 
+
 Response:
 **CHR:** `O b`
 **HEX:** {0x4F, 0x00, 0x62}
@@ -126,6 +130,7 @@ Response:
 Clear screen (interpreter does not care with the attribute): 
 **CHR:** `[C0]`
 **HEX:** {0x5B, 0x43, 0x30, 0x5D}
+
 
 Response:
 **CHR:** `O C`
@@ -136,19 +141,25 @@ Set backlight to intensity 50:
 **CHR:** `[B2]`
 **HEX:** {0x5B, 0x42, 0x32, 0x5D}
 
+
 Response:
 **CHR:** `O B`
 **HEX:** {0x4F, 0x00, 0x42}
 
+
+
 Negative response examples:
+
 
 Command format error:
 **CHR:** `NF]`
 **HEX:** {0x4E, 0x46, 0x5D}
 
+
 Command ongoing (note: 'x' equals to one of the Command codes from the first table):
 **CHR:** `NGx`
 **HEX:** {0x4E, 0x47, 0xXX}
+
 
 Command unknown (note: 'x' equals to one of the Command codes from the first table):
 **CHR:** `NUx`
