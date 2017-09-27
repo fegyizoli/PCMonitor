@@ -1,0 +1,10 @@
+D:\git\PCMonitor-host\PCMonitor\PCMonitor\bin\Debug\PCMonitor.exe.config
+D:\git\PCMonitor-host\PCMonitor\PCMonitor\bin\Debug\PCMonitor.exe
+D:\git\PCMonitor-host\PCMonitor\PCMonitor\bin\Debug\PCMonitor.pdb
+D:\git\PCMonitor-host\PCMonitor\PCMonitor\bin\Debug\OpenHardwareMonitorLib.dll
+D:\git\PCMonitor-host\PCMonitor\PCMonitor\obj\Debug\PCMonitor.csprojResolveAssemblyReference.cache
+D:\git\PCMonitor-host\PCMonitor\PCMonitor\obj\Debug\PCMonitor.Form1.resources
+D:\git\PCMonitor-host\PCMonitor\PCMonitor\obj\Debug\PCMonitor.Properties.Resources.resources
+D:\git\PCMonitor-host\PCMonitor\PCMonitor\obj\Debug\PCMonitor.csproj.GenerateResource.Cache
+D:\git\PCMonitor-host\PCMonitor\PCMonitor\obj\Debug\PCMonitor.exe
+D:\git\PCMonitor-host\PCMonitor\PCMonitor\obj\Debug\PCMonitor.pdb
