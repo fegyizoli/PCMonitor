@@ -103,7 +103,7 @@ Command format:
 `"[" command-code  attribute0  attribute1 ... attributeN "]"`
 
 
-Examples:
+**Examples:**
 
 
 
@@ -164,7 +164,7 @@ Response:
 
 
 
-Negative response examples:
+**Negative response examples:**
 
 
 Command format error:
