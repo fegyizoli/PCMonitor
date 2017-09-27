@@ -208,7 +208,7 @@ boolean processLongCmd(char c)
                 /* Command format error: "[]"  */
                 act_retval = C_CMDNOK;
                 act_faultcode = C_CMDFOR;
-
+                act_cmd = c;
             }
             commandState_old = commandState;
             commandState = CMD_END;

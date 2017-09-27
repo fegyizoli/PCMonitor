@@ -13,7 +13,7 @@ This is a basic 'arduino-based' module which contains:
 - [x] Debug mode (messages via UART)
 - [ ] Basic custom character handling (only 8 chars)
 - [ ] Advanced custom character handling (any chars)
-- [ ] Feedback to host
+- [x] Feedback to host
 - [ ] Host application to PC (basic C# application with openhardwaremonitor.dll)
 - [ ] connect 4x4 pinpad
 - [ ] basic menu feature
@@ -75,8 +75,33 @@ The connection shall be renewed with a command or the conne
 |  c                                 | 0x63  | Write line 2                    |
 |  d                                | 0x64  | Write line 3                    |
 
+Command response codes:
+
+| Command code (Chr)           | Hex      | Description                    |
+| :-------------------------- |:-------:|:------------------------ |
+|  F                                    | 0x46     | Format error                  |
+|  G                                    | 0x47     | Ongoing command          |
+|  N                                    | 0x4E     | Command NOK               |
+|  O                                    | 0x4F     | Command OK                 |
+|  U                                    | 0x55     | Command unknown         |
+
+
+Positive responses:
+
+| Byte 0 | Byte 1 | Byte 2 |
+|:------:|:------:|:------:|
+| O        | always 0x00 | command code |
+
+Negative responses:
+
+| Byte 0 | Byte 1 | Byte 2 |
+|:------:|:------:|:------:|
+| N        | fault code (F,G,U) | command code |
+
+
 Command format:
 `"[" command-code  attribute0  attribute1 ... attributeN "]"`
+
 
 Examples:
 
@@ -84,17 +109,49 @@ Write "Hello world!" to the first line:
 **CHR:** `+[aHello world!]` 
 **HEX:** {0x2B, 0x5B, 0x61, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21, 0x5D}
 
+Response (note: NUL character is represented here as a whitespace):
+**CHR:** `O +O a`
+**HEX:** {0x4F, 0x00, 0x2B, 0x4F, 0x00, 0x61}
+
+
 Write "Hello world!" to the second line: 
 **CHR:** `[bHello world!]`
 **HEX:** {0x5B, 0x62, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21, 0x5D}
+
+Response:
+**CHR:** `O b`
+**HEX:** {0x4F, 0x00, 0x62}
+
 
 Clear screen (interpreter does not care with the attribute): 
 **CHR:** `[C0]`
 **HEX:** {0x5B, 0x43, 0x30, 0x5D}
 
+Response:
+**CHR:** `O C`
+**HEX:** {0x4F, 0x00, 0x43}
+
+
 Set backlight to intensity 50: 
 **CHR:** `[B2]`
 **HEX:** {0x5B, 0x42, 0x32, 0x5D}
 
+Response:
+**CHR:** `O B`
+**HEX:** {0x4F, 0x00, 0x42}
+
+Negative response examples:
+
+Command format error:
+**CHR:** `NF]`
+**HEX:** {0x4E, 0x46, 0x5D}
+
+Command ongoing (note: 'x' equals to one of the Command codes from the first table):
+**CHR:** `NGx`
+**HEX:** {0x4E, 0x47, 0xXX}
+
+Command unknown (note: 'x' equals to one of the Command codes from the first table):
+**CHR:** `NUx`
+**HEX:** {0x4E, 0x55, 0xXX}
 
 
