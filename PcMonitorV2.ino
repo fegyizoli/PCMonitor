@@ -6,7 +6,7 @@
 #include <SimpleTimer.h>
 
 /* LONG COMMAND STATES */
-#define CMD_CODE    0
+#define CMD_CODE    0 
 #define CMD_LEN      1
 #define CMD_DATA    2
 #define CMD_END      3
