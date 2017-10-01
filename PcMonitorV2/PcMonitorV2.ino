@@ -39,6 +39,7 @@
 /* FIRMWARE CONFIGURATION */
 #define ENABLE_SERIAL_DEBUGGING 0
 
+#define ENABLE_CONNECTION_TIMEOUT 0
 #define CONNECTION_TIMEOUT 30000
 
 #define UART_BAUDRATE 19200
@@ -146,8 +147,11 @@ boolean processLongCmd(char c)
                 /* Connected successfully */
                 sendResponse(C_CMDOK, ' ', '+');
                 
-                connectTimerID = connectTimer.setTimeout(CONNECTION_TIMEOUT,connectionTimeoutCallback);
-                connectTimerTimestamp = millis();
+                if(ENABLE_CONNECTION_TIMEOUT)
+                {
+                    connectTimerID = connectTimer.setTimeout(CONNECTION_TIMEOUT,connectionTimeoutCallback);
+                    connectTimerTimestamp = millis();
+                }
             }
             else if((isConnected == true) && (commandState == CMD_END))
             {
@@ -158,8 +162,11 @@ boolean processLongCmd(char c)
                     Serial.write(" s timer...\n");                    
                 }
                 
-                connectTimer.restartTimer(connectTimerID);
-                connectTimerTimestamp = millis();
+                if(ENABLE_CONNECTION_TIMEOUT)
+                {
+                    connectTimer.restartTimer(connectTimerID);
+                    connectTimerTimestamp = millis();
+                }
             }
         }
         break;
@@ -175,7 +182,11 @@ boolean processLongCmd(char c)
                 }
                 /* Disconnected successfully */
                 sendResponse(C_CMDOK, ' ', '-');
-                connectTimer.setTimeout(1,connectionTimeoutCallback);
+                
+                if(ENABLE_CONNECTION_TIMEOUT)
+                {
+                    connectTimer.setTimeout(1,connectionTimeoutCallback);
+                }
             }
         }
         break;
@@ -235,13 +246,19 @@ boolean processLongCmd(char c)
         {
             if(isConnected == true)
             {
-                /* restart connection timer */
-                connectTimer.restartTimer(connectTimerID);
-                connectTimerTimestamp = millis();
+                if(ENABLE_CONNECTION_TIMEOUT)
+                {
+                    /* restart connection timer */
+                    connectTimer.restartTimer(connectTimerID);
+                    connectTimerTimestamp = millis();
+                }
+                
                 if(ENABLE_SERIAL_DEBUGGING)
                 {
                     Serial.write("character belongs to a longer command!\n");
                 }
+                
+                
                 switch(commandState)
                 {         
                     case CMD_CODE:
@@ -494,6 +511,10 @@ void loop()
     }
     (void)processLongCmd(c);   
   }
-  connectionCheck();
+  
+  if(ENABLE_CONNECTION_TIMEOUT)
+  {
+    connectionCheck();
+  }
 }
 
