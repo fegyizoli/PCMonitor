@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO.Ports;
 using OpenHardwareMonitor.Hardware;
 using System.Windows.Forms;
+using System.Management;
 
 
 namespace PCMonitor
@@ -30,28 +31,41 @@ namespace PCMonitor
             pc.Open();
         }
 
-        public void Init(ComboBox cb, SerialPort sp_ref)
+        public void Init(ComboBox cb, SerialPort sp_ref, CheckBox chk, Timer t)
         {
-            try
-            {
-                sp_ref.Parity = Parity.None;
-                sp_ref.StopBits = StopBits.One;
-                sp_ref.DataBits = 8;
-                sp_ref.Handshake = Handshake.None;
-                sp_ref.RtsEnable = true;
 
-                string[] ports = SerialPort.GetPortNames();
-                foreach (string port_name in ports)
+                try
                 {
-                    cb.Items.Add(port_name);
-                }
+                    sp_ref.Parity = Parity.None;
+                    sp_ref.StopBits = StopBits.One;
+                    sp_ref.DataBits = 8;
+                    sp_ref.Handshake = Handshake.None;
+                    sp_ref.RtsEnable = true;
 
-                sp_ref.BaudRate = 19200;
-            }
-            catch(Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+                    string[] ports = SerialPort.GetPortNames();
+                    foreach (string port_name in ports)
+                    {
+                        cb.Items.Add(port_name);
+                    }
+
+                    sp_ref.BaudRate = 19200;
+
+                    if (chk.Checked == true)
+                    {
+                        if(cb.Items.Count == 1)
+                        {
+                            cb.SelectedIndex = cb.Items.IndexOf(ports[0]);
+                            sp_ref.PortName = cb.Text;
+                            sp_ref.Open();
+                            t.Interval = 1000;
+                            t.Enabled = true;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
         }
 
         /* Get status of the hardwares */
@@ -193,7 +207,7 @@ namespace PCMonitor
             }
             tv.ExpandAll();
         }
-
+        
         public void setGPUFanspeed(IHardware hw, int value)
         {
             if(hw.HardwareType == HardwareType.GpuAti)

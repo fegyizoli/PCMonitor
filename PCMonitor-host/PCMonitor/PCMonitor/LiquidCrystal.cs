@@ -54,7 +54,7 @@ namespace PCMonitor
             int i, slen;
             byte[] cmd;
 
-            string sdata = "[";
+            string sdata = "+[";
             
             switch(line)
             {

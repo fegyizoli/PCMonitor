@@ -31,8 +31,25 @@ namespace PCMonitor
 
             InitializeComponent();
 
-            PCMonitorObject.Init(portsCombo, port);
-            toolStripLabel.Text = "Initialized.";
+            PCMonitorObject.Init(portsCombo, port, checkBoxAutoConnect, timer1);
+            
+            if(timer1.Enabled == true)
+            {
+                groupBoxLCD.Enabled = true;
+                LCD.Connect();
+                trackBar1.Value = 120;
+                connectBtn.Enabled = false;
+                disconnectBtn.Enabled = true;
+            }
+
+            if (checkBoxAutoConnect.Enabled == false)
+            {
+                toolStripLabel.Text = "Initialized.";
+            }
+            else
+            {
+                toolStripLabel.Text = "Connected.";
+            }
         }
 
 
@@ -49,6 +66,7 @@ namespace PCMonitor
                     timer1.Interval = 1000;
                     timer1.Enabled = true;
                     connectBtn.Enabled = false;
+                    checkBoxAutoConnect.Enabled = false;
                     disconnectBtn.Enabled = true;
                     //PCMonitorObject.updateTreeView(treeView1);
                     toolStripLabel.Text = "Build up tree...";
@@ -77,6 +95,7 @@ namespace PCMonitor
                 timer1.Enabled = false;
                 toolStripLabel.Text = "Disconnected.";
                 disconnectBtn.Enabled = false;
+                checkBoxAutoConnect.Enabled = true;
                 connectBtn.Enabled = true;
                 groupBoxLCD.Enabled = false;
             }
@@ -94,19 +113,16 @@ namespace PCMonitor
             //PCMonitorObject.updateTreeView(treeView1);
             PCMonitorObject.Status();
             LCD.BuildScreen();
+            toolStripLabel.Text = "Updated data at: " + DateTime.Now.ToString("YYYY.MM.DD. (HH.MM.SS)");
         }
         #endregion
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
             LCD.SetBacklight((uint)trackBar1.Value);
-
+            toolStripLabel.Text = ("LCD backlight changed: " + (uint)trackBar1.Value + "\\" + trackBar1.Maximum.ToString());
         }
 
-        private void gpufan_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
 
 
 

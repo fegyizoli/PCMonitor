@@ -117,7 +117,7 @@
             // trackBar1
             // 
             this.trackBar1.Location = new System.Drawing.Point(6, 19);
-            this.trackBar1.Maximum = 200;
+            this.trackBar1.Maximum = 255;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(413, 45);
             this.trackBar1.TabIndex = 8;
@@ -171,6 +171,8 @@
             // checkBoxAutoConnect
             // 
             this.checkBoxAutoConnect.AutoSize = true;
+            this.checkBoxAutoConnect.Checked = true;
+            this.checkBoxAutoConnect.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxAutoConnect.Location = new System.Drawing.Point(145, 21);
             this.checkBoxAutoConnect.Name = "checkBoxAutoConnect";
             this.checkBoxAutoConnect.Size = new System.Drawing.Size(87, 17);
