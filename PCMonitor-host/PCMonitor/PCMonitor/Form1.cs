@@ -46,14 +46,14 @@ namespace PCMonitor
                     port.PortName = portsCombo.Text;
                     port.Open();
                     //TODO: setup
-                    timer1.Interval = 100;
+                    timer1.Interval = 1000;
                     timer1.Enabled = true;
-                    connectionLabel.Visible = true;
                     connectBtn.Enabled = false;
                     disconnectBtn.Enabled = true;
                     //PCMonitorObject.updateTreeView(treeView1);
                     toolStripLabel.Text = "Build up tree...";
                     LCD.Connect();
+                    groupBoxLCD.Enabled = true;
                     trackBar1.Value = 120;
                 }
             }
@@ -71,13 +71,14 @@ namespace PCMonitor
             {
                 if (port.IsOpen == true)
                 {
+                    LCD.Disconnect();
                     port.Close();
                 }
                 timer1.Enabled = false;
-                LCD.Disconnect();
                 toolStripLabel.Text = "Disconnected.";
                 disconnectBtn.Enabled = false;
                 connectBtn.Enabled = true;
+                groupBoxLCD.Enabled = false;
             }
             catch(Exception ex)
             {

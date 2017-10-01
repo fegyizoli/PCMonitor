@@ -38,36 +38,38 @@
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.connectionLabel = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBoxLCD = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.lcdTimeoutInterval = new System.Windows.Forms.TextBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkBoxAutoConnect = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this.groupBoxLCD.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // portsCombo
             // 
             this.portsCombo.FormattingEnabled = true;
-            this.portsCombo.Location = new System.Drawing.Point(79, 14);
+            this.portsCombo.Location = new System.Drawing.Point(41, 18);
             this.portsCombo.Name = "portsCombo";
-            this.portsCombo.Size = new System.Drawing.Size(147, 21);
+            this.portsCombo.Size = new System.Drawing.Size(97, 21);
             this.portsCombo.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 14);
+            this.label1.Location = new System.Drawing.Point(6, 21);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 13);
+            this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Select port:";
+            this.label1.Text = "Port:";
             // 
             // connectBtn
             // 
-            this.connectBtn.Location = new System.Drawing.Point(295, 12);
+            this.connectBtn.Location = new System.Drawing.Point(279, 16);
             this.connectBtn.Name = "connectBtn";
             this.connectBtn.Size = new System.Drawing.Size(60, 23);
             this.connectBtn.TabIndex = 3;
@@ -78,7 +80,7 @@
             // disconnectBtn
             // 
             this.disconnectBtn.Enabled = false;
-            this.disconnectBtn.Location = new System.Drawing.Point(363, 12);
+            this.disconnectBtn.Location = new System.Drawing.Point(345, 16);
             this.disconnectBtn.Name = "disconnectBtn";
             this.disconnectBtn.Size = new System.Drawing.Size(74, 23);
             this.disconnectBtn.TabIndex = 4;
@@ -112,16 +114,6 @@
             this.toolStripLabel.Size = new System.Drawing.Size(118, 17);
             this.toolStripLabel.Text = "toolStripStatusLabel1";
             // 
-            // connectionLabel
-            // 
-            this.connectionLabel.AutoSize = true;
-            this.connectionLabel.Location = new System.Drawing.Point(232, 17);
-            this.connectionLabel.Name = "connectionLabel";
-            this.connectionLabel.Size = new System.Drawing.Size(59, 13);
-            this.connectionLabel.TabIndex = 6;
-            this.connectionLabel.Text = "Connected";
-            this.connectionLabel.Visible = false;
-            // 
             // trackBar1
             // 
             this.trackBar1.Location = new System.Drawing.Point(6, 19);
@@ -132,17 +124,18 @@
             this.trackBar1.TickFrequency = 5;
             this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
-            // groupBox1
+            // groupBoxLCD
             // 
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.lcdTimeoutInterval);
-            this.groupBox1.Controls.Add(this.trackBar1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 41);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(425, 119);
-            this.groupBox1.TabIndex = 9;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "LCD backlight";
+            this.groupBoxLCD.Controls.Add(this.label2);
+            this.groupBoxLCD.Controls.Add(this.lcdTimeoutInterval);
+            this.groupBoxLCD.Controls.Add(this.trackBar1);
+            this.groupBoxLCD.Enabled = false;
+            this.groupBoxLCD.Location = new System.Drawing.Point(12, 175);
+            this.groupBoxLCD.Name = "groupBoxLCD";
+            this.groupBoxLCD.Size = new System.Drawing.Size(425, 119);
+            this.groupBoxLCD.TabIndex = 9;
+            this.groupBoxLCD.TabStop = false;
+            this.groupBoxLCD.Text = "LCD backlight";
             // 
             // label2
             // 
@@ -161,26 +154,48 @@
             this.lcdTimeoutInterval.Size = new System.Drawing.Size(100, 20);
             this.lcdTimeoutInterval.TabIndex = 9;
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.checkBoxAutoConnect);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.portsCombo);
+            this.groupBox2.Controls.Add(this.connectBtn);
+            this.groupBox2.Controls.Add(this.disconnectBtn);
+            this.groupBox2.Location = new System.Drawing.Point(12, 41);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(425, 128);
+            this.groupBox2.TabIndex = 10;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Connection";
+            // 
+            // checkBoxAutoConnect
+            // 
+            this.checkBoxAutoConnect.AutoSize = true;
+            this.checkBoxAutoConnect.Location = new System.Drawing.Point(145, 21);
+            this.checkBoxAutoConnect.Name = "checkBoxAutoConnect";
+            this.checkBoxAutoConnect.Size = new System.Drawing.Size(87, 17);
+            this.checkBoxAutoConnect.TabIndex = 5;
+            this.checkBoxAutoConnect.Text = "Autoconnect";
+            this.checkBoxAutoConnect.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(449, 411);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.connectionLabel);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBoxLCD);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.disconnectBtn);
-            this.Controls.Add(this.connectBtn);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.portsCombo);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "PC Monitor host";
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.groupBoxLCD.ResumeLayout(false);
+            this.groupBoxLCD.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -196,11 +211,12 @@
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripLabel;
-        private System.Windows.Forms.Label connectionLabel;
         private System.Windows.Forms.TrackBar trackBar1;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBoxLCD;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox lcdTimeoutInterval;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox checkBoxAutoConnect;
     }
 }
 
